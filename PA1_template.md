@@ -6,14 +6,26 @@ output:
 ---
 
 ## Loading and preprocessing the data
-```{r echo=TRUE}
+
+``` r
 data <- read.csv("activity.csv")
 data$date <- as.Date(data$date)
 head(data)
 ```
 
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
+```
+
 ## What is mean total number of steps taken per day?
-```{r echo=TRUE}
+
+``` r
 total_steps_day <- aggregate(steps ~ date, data, sum, na.rm = TRUE)
 
 hist(total_steps_day$steps,
@@ -21,16 +33,32 @@ hist(total_steps_day$steps,
      xlab = "Total Steps Per Day",
      col = "lightblue",
      breaks = 20)
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+``` r
 mean_steps <- mean(total_steps_day$steps)
 median_steps <- median(total_steps_day$steps)
 
 mean_steps
+```
+
+```
+## [1] 10766.19
+```
+
+``` r
 median_steps
 ```
 
+```
+## [1] 10765
+```
+
 ## What is the average daily activity pattern?
-```{r echo=TRUE}
+
+``` r
 average_interval <- aggregate(steps ~ interval, data, mean, na.rm = TRUE)
 
 plot(average_interval$interval,
@@ -39,15 +67,31 @@ plot(average_interval$interval,
      xlab = "5-minute Interval",
      ylab = "Average Number of Steps",
      main = "Average Daily Activity Pattern")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
 max_interval <- average_interval[which.max(average_interval$steps), ]
 max_interval
 ```
 
-## Imputing missing values
-```{r echo=TRUE}
-sum(is.na(data$steps))
+```
+##     interval    steps
+## 104      835 206.1698
+```
 
+## Imputing missing values
+
+``` r
+sum(is.na(data$steps))
+```
+
+```
+## [1] 2304
+```
+
+``` r
 interval_means <- aggregate(steps ~ interval, data, mean, na.rm = TRUE)
 
 data_filled <- data
@@ -62,7 +106,8 @@ for (i in 1:nrow(data_filled)) {
 ```
 
 ## Histogram After Imputation
-```{r echo=TRUE}
+
+``` r
 total_steps_day_filled <- aggregate(steps ~ date, data_filled, sum)
 
 hist(total_steps_day_filled$steps,
@@ -70,13 +115,29 @@ hist(total_steps_day_filled$steps,
      xlab = "Total Steps Per Day",
      col = "lightgreen",
      breaks = 20)
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
 mean(total_steps_day_filled$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+``` r
 median(total_steps_day_filled$steps)
 ```
 
+```
+## [1] 10766.19
+```
+
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r echo=TRUE}
+
+``` r
 data_filled$day_type <- ifelse(
   weekdays(data_filled$date) %in% c("Saturday", "Sunday"),
   "weekend",
@@ -99,3 +160,5 @@ ggplot(interval_daytype,
        x = "5-minute Interval",
        y = "Average Steps")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
